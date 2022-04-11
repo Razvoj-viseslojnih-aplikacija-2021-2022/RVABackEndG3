@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 /**
@@ -19,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * 
  */
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NamedQuery(name="Artikl.findAll", query="SELECT a FROM Artikl a")
 public class Artikl implements Serializable {
 	private static final long serialVersionUID = 1L;
