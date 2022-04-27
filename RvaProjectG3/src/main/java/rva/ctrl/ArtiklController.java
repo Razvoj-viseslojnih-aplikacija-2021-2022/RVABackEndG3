@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,16 +14,23 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import rva.model.Artikl;
 import rva.repositories.ArtiklRepository;
 
 @RestController
+@Api(tags = {"CRUD operations on Artikl table"})
 public class ArtiklController {
 
 	@Autowired
 	private ArtiklRepository artiklRepository;
 	
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
 	@GetMapping("/artikl")
+	@ApiOperation(value = "Method which returns all rows from Artikl table")
 	public Collection<Artikl> getAllArticles(){
 		return artiklRepository.findAll();
 	}
@@ -54,6 +63,22 @@ public class ArtiklController {
 			return new ResponseEntity<Artikl>(HttpStatus.OK);
 		}else {
 			return new ResponseEntity<Artikl>(HttpStatus.CONFLICT);
+		}
+	}
+	
+	@DeleteMapping("/artikl/{id}")
+	public ResponseEntity<Artikl> deleteArtikl(@PathVariable int id){
+		if(artiklRepository.existsById(id)) {
+			if(id == -100) {
+				artiklRepository.deleteById(id);
+				jdbcTemplate.execute("Insert into artikl(\"id\", \"naziv\", \"proizvodjac\") values(-100,'test naziv', 'test proizvodjac')");
+				return new ResponseEntity<Artikl>(HttpStatus.OK);
+			}else {
+				artiklRepository.deleteById(id);
+				return new ResponseEntity<Artikl>(HttpStatus.OK);
+			}
+		}else {
+			return new ResponseEntity<Artikl>(HttpStatus.NOT_FOUND);
 		}
 	}
 }
