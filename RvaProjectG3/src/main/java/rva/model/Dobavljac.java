@@ -3,6 +3,7 @@ package rva.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,7 +25,7 @@ public class Dobavljac implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="DOBAVLJAC_ID_GENERATOR", sequenceName="DOBAVLJAC_ID_SEQ")
+	@SequenceGenerator(name="DOBAVLJAC_ID_GENERATOR", sequenceName="DOBAVLJAC_ID_SEQ", allocationSize = 1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DOBAVLJAC_ID_GENERATOR")
 	private Integer id;
 
@@ -35,7 +36,7 @@ public class Dobavljac implements Serializable {
 	private String naziv;
 
 	//bi-directional many-to-one association to Porudzbina
-	@OneToMany(mappedBy="dobavljac")
+	@OneToMany(mappedBy="dobavljac", cascade = {CascadeType.DETACH, CascadeType.REMOVE})
 	@JsonIgnore
 	private List<Porudzbina> porudzbinas;
 
